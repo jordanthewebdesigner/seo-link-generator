@@ -22,9 +22,30 @@ export default function Home() {
     setLocations(e.target.value);
   };
 
-  const handleLinkCopy = (link) => {
-    console.log(link);
-    navigator.clipboard.writeText(link);
+  // const handleLinkCopy = (link) => {
+  //   const updatedLinks = generatedLinks.map((generatedLink) => {
+  //     if (generatedLink.link === link) {
+  //       return {
+  //         ...generatedLink,
+  //         copied: true,
+  //       };
+  //     }
+  //     return generatedLink;
+  //   });
+
+  //   setGeneratedLinks(updatedLinks);
+  //   console.log(link);
+  //   navigator.clipboard.writeText(link);
+  // };
+
+  const handleLinkCopy = (linkIndex, linkType) => {
+    console.log(linkIndex, linkType);
+    const updatedLinks = [...generatedLinks]; // Create a shallow copy of generatedLinks
+    updatedLinks[linkIndex][linkType].copied = true;
+
+    setGeneratedLinks(updatedLinks);
+    console.log(generatedLinks[linkIndex]);
+    navigator.clipboard.writeText(generatedLinks[linkIndex][linkType].link);
   };
 
   const handleGenerateLinks = (e) => {
@@ -218,7 +239,7 @@ export default function Home() {
           <>
             <div
               className="inline-flex items-center justify-center w-full"
-              key={`${linkInfo.keyword}-${linkInfo.location}`}
+              key={index}
             >
               <hr className="w-64 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
               <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900 capitalize">
@@ -231,42 +252,138 @@ export default function Home() {
               className="mb-10  lg:mb-0 lg:grid-cols-2 md:grid-cols-1 lg:text-left"
             >
               <div
-                className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                onClick={() => handleLinkCopy(linkInfo.bbb)}
+                className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
+                  linkInfo.bbb.copied
+                    ? "border-gray-500 bg-gray-100/0"
+                    : "border-gray-500 bg-gray-100/10"
+                }`}
+                onClick={() => {
+                  console.log(linkInfo.bbb.copied);
+                  handleLinkCopy(index, "bbb");
+                }}
               >
                 <h2 className={`mb-3 text-2xl font-semibold`}>BBB</h2>
-                <div className={`m-0 text-sm opacity-50`}>{linkInfo.bbb}</div>
-              </div>
-              <div
-                className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                onClick={() => handleLinkCopy(linkInfo.yelp)}
-              >
-                <h2 className={`mb-3 text-2xl font-semibold`}>Yelp</h2>
-                <div className={`m-0 text-sm opacity-50`}>{linkInfo.yelp}</div>
-              </div>
-              <div
-                className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                onClick={() => handleLinkCopy(linkInfo.local)}
-              >
-                <h2 className={`mb-3 text-2xl font-semibold`}>Local</h2>
-                <div className={`m-0 text-sm opacity-50`}>{linkInfo.local}</div>
-              </div>
-              <div
-                className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                onClick={() => handleLinkCopy(linkInfo.superpages)}
-              >
-                <h2 className={`mb-3 text-2xl font-semibold`}>Super Pages</h2>
-                <div className={`m-0 text-sm opacity-50`}>
-                  {linkInfo.superpages}
+                <div className={`m-0 text-sm opacity-50 text-right`}>
+                  {linkInfo.bbb.link}{" "}
+                  {linkInfo.bbb.copied && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6  right-0 bottom-5 text-green-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
                 </div>
               </div>
               <div
-                className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                onClick={() => handleLinkCopy(linkInfo.yellowpages)}
+                className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
+                  linkInfo.yelp.copied
+                    ? "border-gray-500 bg-gray-100/0"
+                    : "border-gray-500 bg-gray-100/10"
+                }`}
+                onClick={() => {
+                  console.log(linkInfo.yelp.copied);
+                  handleLinkCopy(index, "yelp");
+                }}
+              >
+                <h2 className={`mb-3 text-2xl font-semibold`}>Yelp</h2>
+                <div className={`m-0 text-sm opacity-50 text-right`}>
+                  {linkInfo.yelp.link}{" "}
+                  {linkInfo.yelp.copied && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6  right-0 bottom-5 text-green-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+              <div
+                className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
+                  linkInfo.local.copied
+                    ? "border-gray-500 bg-gray-100/0"
+                    : "border-gray-500 bg-gray-100/10"
+                }`}
+                onClick={() => {
+                  console.log(linkInfo.local.copied);
+                  handleLinkCopy(index, "local");
+                }}
+              >
+                <h2 className={`mb-3 text-2xl font-semibold`}>local</h2>
+                <div className={`m-0 text-sm opacity-50 text-right`}>
+                  {linkInfo.local.link}{" "}
+                  {linkInfo.local.copied && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6  right-0 bottom-5 text-green-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+              <div
+                className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
+                  linkInfo.superpages.copied
+                    ? "border-gray-500 bg-gray-100/0"
+                    : "border-gray-500 bg-gray-100/10"
+                }`}
+                onClick={() => {
+                  console.log(linkInfo.superpages.copied);
+                  handleLinkCopy(index, "superpages");
+                }}
+              >
+                <h2 className={`mb-3 text-2xl font-semibold`}>Super Pages</h2>
+                <div className={`m-0 text-sm opacity-50 text-right`}>
+                  {linkInfo.superpages.link}{" "}
+                  {linkInfo.superpages.copied && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6  right-0 bottom-5 text-green-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+              </div>
+              <div
+                className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
+                  linkInfo.yellowpages.copied
+                    ? "border-gray-500 bg-gray-100/0"
+                    : "border-gray-500 bg-gray-100/10"
+                }`}
+                onClick={() => {
+                  console.log(linkInfo.yellowpages.copied);
+                  handleLinkCopy(index, "yellowpages");
+                }}
               >
                 <h2 className={`mb-3 text-2xl font-semibold`}>Yellow Pages</h2>
-                <div className={`m-0 text-sm opacity-50`}>
-                  {linkInfo.yellowpages}
+                <div className={`m-0 text-sm opacity-50 text-right`}>
+                  {linkInfo.yellowpages.link}{" "}
+                  {linkInfo.yellowpages.copied && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6  right-0 bottom-5 text-green-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
                 </div>
               </div>
             </div>

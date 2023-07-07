@@ -28,18 +28,40 @@ export function generateLinks(keywords, locations) {
   const links = [];
 
   for (let i = 0; i < keywords.length; i++) {
-    //add a link for each keyword/location pair
+    // add a link for each keyword/location pair
     for (let j = 0; j < locations.length; j++) {
-      links.push({
+      const link = {
         keyword: keywords[i],
         location: locations[j],
-        superpages: superpagesLink(keywords[i], locations[j]),
-        yellowpages: yellowpagesLink(keywords[i], locations[j]),
-        bbb: bbbLink(keywords[i], locations[j]),
-        yelp: yelpLink(keywords[i], locations[j]),
-        local: localLink(keywords[i], locations[j]),
-      });
+        copied: false,
+        superpages: {
+          link: superpagesLink(keywords[i], locations[j]),
+          copied: false,
+        },
+        yellowpages: {
+          link: yellowpagesLink(keywords[i], locations[j]),
+          copied: false,
+        },
+        bbb: {
+          link: bbbLink(keywords[i], locations[j]),
+          copied: false,
+        },
+        yelp: {
+          link: yelpLink(keywords[i], locations[j]),
+          copied: false,
+        },
+        local: {
+          link: localLink(keywords[i], locations[j]),
+          copied: false,
+        },
+      };
+
+      link.handleLinkCopy = (linkType) =>
+        handleLinkCopy(links.length, linkType);
+
+      links.push(link);
     }
   }
+
   return links;
 }
