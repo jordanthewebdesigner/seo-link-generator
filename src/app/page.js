@@ -51,10 +51,6 @@ export default function Home() {
     //add regex to get the text inside the parentheses
     const regex = /\(([^)]+)\)/g;
     //if there are parentheses, extract the text inside them otherwise there is only one location
-    // tthe list can look like this, notice that the state is onlt on the last city for each state:
-    // Charlotte, Shelby, Gastonia, Hickory, Statesville, Matthews, Salisbury, Albemarle, Concord, Huntersville, Harrisburg, Kings Mountain (NC)  Rock Hill, Clover, York, Fort Mill (SC)
-    // so we need to split on the state abbreviation and then add the state to the end of each city
-    // the format needs to be: city, state (abbreviation)
     let currentState = "";
     const locations = text.split(",");
     //iterate through the locations from the end to the beginning and add the state to the end of each city
@@ -94,7 +90,7 @@ export default function Home() {
             Learn more on Github.
           </a>
         </div>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+        <div className="fixed bottom-0 left-0 flex h-8 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a
             className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
             href="https://jordanclark.tech"
@@ -164,7 +160,7 @@ export default function Home() {
               rows={10}
               value={locations}
               onChange={handleLocationsChange}
-              placeholder="Enter locations in the format 'City, State (Abbreviation)' separated by commas"
+              placeholder="Enter one location in this format: 'Miami FL', or multiple locations in this format: 'Miami, Orlando, (FL)'"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -186,7 +182,7 @@ export default function Home() {
                 <div>
                   <ul>
                     {extractedLocations.map((location, index) => (
-                      <li key={`${location}-${index}`}>{location}</li>
+                      <li key={`${location}-${index}`}>{location.trim()}</li>
                     ))}
                   </ul>
                 </div>
