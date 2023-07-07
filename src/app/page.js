@@ -316,7 +316,7 @@ export default function Home() {
                   handleLinkCopy(index, "local");
                 }}
               >
-                <h2 className={`mb-3 text-2xl font-semibold`}>local</h2>
+                <h2 className={`mb-3 text-2xl font-semibold`}>Local</h2>
                 <div className={`m-0 text-sm opacity-50 text-right`}>
                   {linkInfo.local.link}{" "}
                   {linkInfo.local.copied && (
