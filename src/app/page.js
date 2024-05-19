@@ -4,11 +4,12 @@ import { generateLinks } from "./linkGenerator";
 import React, { useState, useEffect } from "react";
 
 export default function Home() {
-  const [keywords, setKeywords] = useState("");
-  const [locations, setLocations] = useState("");
-  const [extractedKeywords, setExtractedKeywords] = useState([]);
   const [extractedLocations, setExtractedLocations] = useState([]);
   const [generatedLinks, setGeneratedLinks] = useState([]);
+  const [extractedKeywords, setExtractedKeywords] = useState([]);
+  const [keywords, setKeywords] = useState("");
+  const [locations, setLocations] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   useEffect(() => {
     console.log(generatedLinks);
@@ -22,21 +23,10 @@ export default function Home() {
     setLocations(e.target.value);
   };
 
-  // const handleLinkCopy = (link) => {
-  //   const updatedLinks = generatedLinks.map((generatedLink) => {
-  //     if (generatedLink.link === link) {
-  //       return {
-  //         ...generatedLink,
-  //         copied: true,
-  //       };
-  //     }
-  //     return generatedLink;
-  //   });
+  const handlePhoneNumberChange = (e) => {
+    setPhoneNumber(e.target.value);
+  };
 
-  //   setGeneratedLinks(updatedLinks);
-  //   console.log(link);
-  //   navigator.clipboard.writeText(link);
-  // };
 
   const handleLinkCopy = (linkIndex, linkType) => {
     console.log(linkIndex, linkType);
@@ -46,6 +36,10 @@ export default function Home() {
     setGeneratedLinks(updatedLinks);
     console.log(generatedLinks[linkIndex]);
     navigator.clipboard.writeText(generatedLinks[linkIndex][linkType].link);
+  };
+
+  const handleClickCopy = (value) => {
+    navigator.clipboard.writeText(value);
   };
 
   const handleGenerateLinks = (e) => {
@@ -61,6 +55,7 @@ export default function Home() {
 
     const locationArray = extractLocations(locations);
     setExtractedLocations(locationArray);
+    setPhoneNumber(phoneNumber);
   };
 
   function extractKeywords(text) {
@@ -212,6 +207,47 @@ export default function Home() {
           </div>
         </div>
 
+        <div className=" group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+            <h2 className={`mb-3 text-2xl font-semibold`}>
+              Phone Number{" "}
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                :
+              </span>
+            </h2>
+            <br />
+            <textarea
+              className="text-black rounded-lg p-2"
+              id="phoneNumber"
+              rows={1}
+              value={phoneNumber}
+              onChange={handlePhoneNumberChange}
+              placeholder="Enter phone number."
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleFormSubmit(e);
+                }
+              }}
+            />
+          </div>
+          
+          <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30">
+            <h2 className={`mb-3 text-2xl font-semibold`}>
+              Phone Number:{" "}
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                :
+              </span>
+            </h2>
+            <div className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+              {phoneNumber.length > 0 && (
+                <div>
+                  {phoneNumber}
+                </div>
+              )}
+            </div>
+          </div>
+
+
         <div className="z-10 mt-8 w-full max-w-5xl items-center justify-around font-mono text-sm lg:flex">
           <h2
             className={`mb-3 text-2xl font-semibold`}
@@ -238,12 +274,13 @@ export default function Home() {
         generatedLinks.map((linkInfo, index) => (
           <>
             <div
-              className="inline-flex items-center justify-center w-full"
+              className="inline-flex items-center justify-center w-full "
               key={index}
+              onClick={handleClickCopy(`${linkInfo.keyword} | ${linkInfo.location} | ${phoneNumber}`)}
             >
               <hr className="w-64 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-              <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900 capitalize">
-                {linkInfo.keyword} | {linkInfo.location}
+              <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900 hover:underline ">
+                {linkInfo.keyword} | {linkInfo.location} | {phoneNumber} 
               </span>
             </div>
 
