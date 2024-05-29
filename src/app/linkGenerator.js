@@ -20,11 +20,10 @@ export function generateLinks(keywords, locations) {
       location
     )}&find_desc=${encodeURIComponent(keyword)}`;
 
-  const localLink = (keyword, location) =>
-    `https://www.local.com/business/results/listing.cfm?ar=${encodeURIComponent(
+  const foursquareLink = (keyword, location) =>
+    `https://foursquare.com/explore?mode=url&near${encodeURIComponent(
       location
-    )}&s=${encodeURIComponent(keyword)}`;
-
+    )}&q=${encodeURIComponent(keyword)}`;
   const links = [];
 
   for (let i = 0; i < keywords.length; i++) {
@@ -50,8 +49,8 @@ export function generateLinks(keywords, locations) {
           link: yelpLink(keywords[i], locations[j]),
           copied: false,
         },
-        local: {
-          link: localLink(keywords[i], locations[j]),
+        foursquare: {
+          link: foursquareLink(keywords[i], locations[j]),
           copied: false,
         },
       };

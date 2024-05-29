@@ -348,19 +348,19 @@ export default function Home() {
               </div>
               <div
                 className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
-                  linkInfo.local.copied
+                  linkInfo.foursquare.copied
                     ? "border-gray-500 bg-gray-100/0"
                     : "border-gray-500 bg-gray-100/10"
                 }`}
                 onClick={() => {
-                  console.log(linkInfo.local.copied);
-                  handleLinkCopy(index, "local");
+                  console.log(linkInfo.foursquare.copied);
+                  handleLinkCopy(index, "foursquare");
                 }}
               >
-                <h2 className={`mb-3 text-2xl font-semibold`}>Local</h2>
+                <h2 className={`mb-3 text-2xl font-semibold`}>Foursquare</h2>
                 <div className={`m-0 text-sm opacity-50 text-right`}>
-                  {linkInfo.local.link}{" "}
-                  {linkInfo.local.copied && (
+                  {linkInfo.foursquare.link}{" "}
+                  {linkInfo.foursquare.copied && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-6 w-6  right-0 bottom-5 text-green-500"
