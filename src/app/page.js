@@ -51,6 +51,12 @@ export default function Home() {
     setPhoneNumber(e.target.value);
   };
 
+const handleClickParagraph = (index, value) => {
+  navigator.clipboard.writeText(value);
+  updatedLinks[index].copied = true;
+  setlinkObjects(updatedLinks);
+};
+
 
   const handleLinkCopy = (linkIndex, linkType) => {
     console.log(linkIndex, linkType);
@@ -104,7 +110,7 @@ export default function Home() {
   function extractLocations(text) {
     if (text.includes(";")) {
       return text.split(";").map((location) => location.trim());
-    }    
+    }
     if (text.includes("\n")) {
       return text.split("\n").map((location) => location.trim());
     }
@@ -121,7 +127,7 @@ export default function Home() {
             href="https://github.com/jordanthewebdesigner/seo-link-generator"
             target="_blank"
           >
-            
+
             Learn more on Github.
           </a>
         </div>
@@ -225,27 +231,27 @@ export default function Home() {
             </div>
           </div>
           <div className="flex flex-col content-start  group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30">
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Phone Number
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              :
-            </span>
-          </h2>
-          <br />
-          <textarea
-            className="text-black rounded-lg p-2"
-            id="phoneNumber"
-            rows={1}
-            value={phoneNumber}
-            onChange={handlePhoneNumberChange}
-            placeholder="555-555-5555"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleFormSubmit(e);
-              }
-            }}
-          />
+            <h2 className={`mb-3 text-2xl font-semibold`}>
+              Phone Number
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                :
+              </span>
+            </h2>
+            <br />
+            <textarea
+              className="text-black rounded-lg p-2"
+              id="phoneNumber"
+              rows={1}
+              value={phoneNumber}
+              onChange={handlePhoneNumberChange}
+              placeholder="555-555-5555"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleFormSubmit(e);
+                }
+              }}
+            />
           </div>
         </div>
 
@@ -274,7 +280,7 @@ export default function Home() {
 
       {linkObjects.length > 0 &&
         linkObjects.map((linkInfo, index) => {
-          const { keyword, location, bbb, yelp, foursquare, superpages, yellowpages } = linkInfo;
+          const { keyword, location, textWithLinks, bbb, yelp, foursquare, superpages, yellowpages } = linkInfo;
           return (
             <>
               <div
@@ -318,11 +324,13 @@ export default function Home() {
                 </button>
               </h2>
 
-              {linkInfo.textWithLinks && (
+              {textWithLinks && (
                 <>
-                  <div 
-                  className="w-full group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                  onClick={handleClickCopy(linkInfo.textWithLinks)}
+                  <div
+                    className="w-full group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+                    onClick={() => {
+                      handleClickParagraph(index, textWithLinks);
+                    }}
                   >
                     <h2 className={`mb-3 text-2xl font-semibold`}>
                       Text With Links Added
@@ -331,8 +339,8 @@ export default function Home() {
                       </span>
                     </h2>
                     <br />
-                    <p 
-                    dangerouslySetInnerHTML={{ __html: linkInfo.textWithLinks }}
+                    <p
+                      dangerouslySetInnerHTML={{ __html: textWithLinks }}
                     >
                     </p>
                   </div>
