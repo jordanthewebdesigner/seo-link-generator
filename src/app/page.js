@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 
 export default function Home() {
   const [extractedLocations, setExtractedLocations] = useState([]);
-  const [generatedLinks, setGeneratedLinks] = useState([]);
+  const [linkObjects, setlinkObjects] = useState([]);
   const [extractedKeywords, setExtractedKeywords] = useState([]);
   const [keywords, setKeywords] = useState("");
   const [locations, setLocations] = useState("");
@@ -14,13 +14,20 @@ export default function Home() {
 
   const handleInjectLinks = (text, keyword, links, index) => {
     console.log(text, keyword, links, index);
-    console.log(generatedLinks[index])
+    console.log(linkObjects[index])
     const updatedText = addLinkstoText(text, keyword, links);
     console.log(updatedText);
-    generatedLinks[index].textWithoutLinks = text;
-    generatedLinks[index].textWithLinks = updatedText;
-    console.log(generatedLinks);
-    setGeneratedLinks([...generatedLinks]);
+    //find all of the objects in the linkObjects array with the same keyword and set the textWithoutLinks property for all of them
+    linkObjects.forEach((link) => {
+      if (link.keyword === keyword) {
+        console.log(link);
+        link.textWithoutLinks = text;
+      }
+    });
+    console.log(linkObjects);
+    linkObjects[index].textWithLinks = updatedText;
+    console.log(linkObjects[index]);
+    setlinkObjects([...linkObjects]);
   }
 
   const handleTextWithoutLinksChange = (e) => {
@@ -29,8 +36,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    console.log(generatedLinks);
-  }, [generatedLinks]);
+    console.log(linkObjects);
+  }, [linkObjects]);
 
   const handleKeywordsChange = (e) => {
     setKeywords(e.target.value);
@@ -47,12 +54,12 @@ export default function Home() {
 
   const handleLinkCopy = (linkIndex, linkType) => {
     console.log(linkIndex, linkType);
-    const updatedLinks = [...generatedLinks]; // Create a shallow copy of generatedLinks
+    const updatedLinks = [...linkObjects]; // Create a shallow copy of linkObjects
     updatedLinks[linkIndex][linkType].copied = true;
 
-    setGeneratedLinks(updatedLinks);
-    console.log(generatedLinks[linkIndex]);
-    navigator.clipboard.writeText(generatedLinks[linkIndex][linkType].link);
+    setlinkObjects(updatedLinks);
+    console.log(linkObjects[linkIndex]);
+    navigator.clipboard.writeText(linkObjects[linkIndex][linkType].link);
   };
 
   const handleClickCopy = (value) => {
@@ -60,8 +67,9 @@ export default function Home() {
   };
 
   const handleGenerateLinks = (e) => {
+    setlinkObjects([]);
     e.preventDefault();
-    setGeneratedLinks(generateLinks(extractedKeywords, extractedLocations));
+    setlinkObjects(generateLinks(extractedKeywords, extractedLocations));
   };
 
   const handleFormSubmit = (e) => {
@@ -264,8 +272,8 @@ export default function Home() {
         </div>
       </form>
 
-      {generatedLinks.length > 0 &&
-        generatedLinks.map((linkInfo, index) => {
+      {linkObjects.length > 0 &&
+        linkObjects.map((linkInfo, index) => {
           const { keyword, location, bbb, yelp, foursquare, superpages, yellowpages } = linkInfo;
           return (
             <>
@@ -296,6 +304,7 @@ export default function Home() {
                   className="text-black rounded-lg p-2 w-full"
                   id="keywords"
                   rows={10}
+                  defaultValue={linkInfo.textWithoutLinks}
                   onChange={handleTextWithoutLinksChange}
                   placeholder='Enter plain text for link injection.'
                 />
@@ -323,7 +332,7 @@ export default function Home() {
                       className="text-black rounded-lg p-2 w-full"
                       id="keywords"
                       rows={10}
-                      value={linkInfo.textWithLinks}
+                      defaultValue={linkInfo.textWithLinks}
                       onChange={handleTextWithoutLinksChange}
                       placeholder='Enter plain text for link injection.'
                     />
