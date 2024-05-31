@@ -1,21 +1,14 @@
-export default function addLinksToText(initialParagraph, incomingKeyword, linksArray) {
-  if (linksArray.length > 1) {
+export default function addLinksToText(initialParagraph, incomingKeyword, links) {
+  if (links.length > 1) {
 
     const keyword = incomingKeyword.toLowerCase();
-    console.log(keyword);
-    console.log(linksArray);
-    console.log(initialParagraph);
-    let links = [];
-    console.log(links);
-    for (let i = 0; i < linksArray[0].length; i++) {
-      console.log(linksArray[0][i]);
-      links.push(linksArray[0][i]);
-    }
-    console.log(links);
+    console.log({initialParagraph});
+    console.log({keyword});
+    console.log({links});
 
     // Count occurrences of the keyword in the initial paragraph
-    var keywordRegex = new RegExp('\\b' + keyword + '\\b', 'gi');
-    //var keywordRegex = new RegExp('\\b' + keyword + '\\b', 'g');
+    var keywordRegex = new RegExp(keyword, 'gi');
+    //var keywordRegex = new RegExp(keyword 'g');
     var keywordCount = (initialParagraph.match(keywordRegex) || []).length;
     console.log(keyword + " count in Initial Paragraph: " + keywordCount);
 

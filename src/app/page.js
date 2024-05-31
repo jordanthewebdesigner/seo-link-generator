@@ -12,7 +12,19 @@ export default function Home() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [textWithoutLinks, setTextWithoutLinks] = useState("");
 
+  const handleInjectLinks = (text, keyword, links, index) => {
+    console.log(text, keyword, links, index);
+    console.log(generatedLinks[index])
+    const updatedText = addLinkstoText(text, keyword, links);
+    console.log(updatedText);
+    generatedLinks[index].textWithoutLinks = text;
+    generatedLinks[index].textWithLinks = updatedText;
+    console.log(generatedLinks);
+    setGeneratedLinks([...generatedLinks]);
+  }
+
   const handleTextWithoutLinksChange = (e) => {
+    console.log(e.target.value);
     setTextWithoutLinks(e.target.value);
   };
 
@@ -58,7 +70,8 @@ export default function Home() {
     const keywordArray = extractKeywords(keywords);
     setExtractedKeywords(keywordArray);
 
-    const locationArray = locations.split(";");
+    const locationArray = extractLocations(locations);
+
     if (locationArray[locationArray.length - 1].length < 1) {
       locationArray.pop();
     }
@@ -68,39 +81,28 @@ export default function Home() {
   };
 
   function extractKeywords(text) {
-    const keywords = text.split(",").map((keyword) => keyword.trim());
-    return keywords;
+    if (text.includes(",")) {
+      return text.split(",").map((keyword) => keyword.trim())
+    }
+    if (text.includes(";")) {
+      return text.split(";").map((keyword) => keyword.trim())
+    }
+    if (text.includes("\n")) {
+      return text.split("\n").map((keyword) => keyword.trim());
+    }
+    return [text.trim()];
   }
 
   function extractLocations(text) {
-    //add regex to get the text inside the parentheses
-    const regex = /\(([^)]+)\)/g;
-    //if there are parentheses, extract the text inside them otherwise there is only one location
-    let currentState = "";
-    const locations = text.split(";");
-    //iterate through the locations from the end to the beginning and add the state to the end of each city
-    for (let i = locations.length - 1; i >= 0; i--) {
-      console.log(locations[i]);
-      //extract the state from the parenthesesm, save as a string
-      const checkForState = locations[i].match(regex);
-      console.log(checkForState);
-      //remove the parentheses from the state
-      const stateExists = checkForState
-        ? checkForState[0].replace(/[()]/g, "")
-        : null;
-      console.log(stateExists);
-      //if the state exists, save it as the current state
-      if (stateExists) {
-        currentState = stateExists;
-        //remove the state and the parentheses from the city
-        locations[i] = locations[i]
-          .replace(stateExists, "")
-          .replace(/[()]/g, "");
-      }
-      //add the state to the end of each city and save it to the array
-      locations[i] = `${locations[i].trim()}, ${currentState}`;
+    if (text.includes(";")) {
+      return text.split(";").map((location) => location.trim());
+    }    
+    if (text.includes("\n")) {
+      return text.split("\n").map((location) => location.trim());
     }
-    return locations;
+    return [text.trim()];
+    return text.split(",").map((location) => location.trim());
+
   }
 
   return (
@@ -111,7 +113,7 @@ export default function Home() {
             href="https://github.com/jordanthewebdesigner/seo-link-generator"
             target="_blank"
           >
-            {" "}
+            
             Learn more on Github.
           </a>
         </div>
@@ -130,7 +132,7 @@ export default function Home() {
         <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
           <div className=" group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
             <h2 className={`mb-3 text-2xl font-semibold`}>
-              Keywords{" "}
+              Keywords
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 :
               </span>
@@ -142,7 +144,7 @@ export default function Home() {
               rows={10}
               value={keywords}
               onChange={handleKeywordsChange}
-              placeholder="Enter keywords separated by commas."
+              placeholder="Enter keywords separated by commas, semicolon, or a new line."
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -153,7 +155,7 @@ export default function Home() {
           </div>
           <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30">
             <h2 className={`mb-3 text-2xl font-semibold`}>
-              Extracted Keywords{" "}
+              Extracted Keywords
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 :
               </span>
@@ -173,7 +175,7 @@ export default function Home() {
 
           <div className=" group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
             <h2 className={`mb-3 text-2xl font-semibold`}>
-              Locations{" "}
+              Locations
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 :
               </span>
@@ -197,7 +199,7 @@ export default function Home() {
 
           <div className="flex flex-col content-start  group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30">
             <h2 className={`mb-3 text-2xl font-semibold`}>
-              Extracted Locations{" "}
+              Extracted Locations
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 :
               </span>
@@ -214,11 +216,9 @@ export default function Home() {
               )}
             </div>
           </div>
-        </div>
-
-        <div className=" group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+          <div className="flex flex-col content-start  group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30">
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Phone Number{" "}
+            Phone Number
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               :
             </span>
@@ -238,32 +238,8 @@ export default function Home() {
               }
             }}
           />
+          </div>
         </div>
-
-        <div className="w-full group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Text to Add Links To{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              :
-            </span>
-          </h2>
-          <br />
-          <textarea
-            className="text-black rounded-lg p-2 w-full"
-            id="keywords"
-            rows={10}
-            value={textWithoutLinks}
-            onChange={handleTextWithoutLinksChange}
-            placeholder='Enter plain text for link injection.'
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleFormSubmit(e);
-              }
-            }}
-          />
-        </div>
-
 
         <div className="z-10 mt-8 w-full max-w-5xl items-center justify-around font-mono text-sm lg:flex">
           <h2
@@ -271,7 +247,7 @@ export default function Home() {
             onClick={handleFormSubmit}
           >
             <button type="submit">
-              Extract Data{" "}
+              Extract Data
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
@@ -279,7 +255,7 @@ export default function Home() {
           </h2>
           <h2 className={`mb-3 text-2xl font-semibold`}>
             <button onClick={handleGenerateLinks}>
-              Create Links{" "}
+              Create Links
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
@@ -287,167 +263,215 @@ export default function Home() {
           </h2>
         </div>
       </form>
-      {generatedLinks.length > 0 && (
-        generatedLinks.map((linkInfo, index) => (
-          addLinkstoText(textWithoutLinks, linkInfo.keyword, linkInfo)
-        ))        ,
-        console.log("linkInfo"),
-        generatedLinks.forEach((linkInfo, index) => (          
-          <>
-          {injectText}           
-            <div
-              className="inline-flex items-center justify-center w-full "
-              key={index}
-            >
-              <hr className="w-64 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-              <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900 hover:underline "
-              
-              onClick={ () => {
-                handleClickCopy(`${linkInfo.keyword} | ${linkInfo.location} | ${phoneNumber}`)
-              }}
-              >
-                {linkInfo.keyword} | {linkInfo.location} | {phoneNumber} 
-              </span>
-            </div>
 
-            <div
-              key={`${linkInfo.keyword}-${linkInfo.location}-${index}`}
-              className="mb-10  lg:mb-0 lg:grid-cols-2 md:grid-cols-1 lg:text-left"
-            >
+      {generatedLinks.length > 0 &&
+        generatedLinks.map((linkInfo, index) => {
+          const { keyword, location, bbb, yelp, foursquare, superpages, yellowpages } = linkInfo;
+          return (
+            <>
               <div
-                className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${linkInfo.bbb.copied
+                className="inline-flex items-center justify-center w-full "
+                key={index}
+              >
+                <hr className="w-64 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+                <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900 hover:underline "
+
+                  onClick={() => {
+                    handleClickCopy(`${keyword} | ${location} | ${phoneNumber}`)
+                  }}
+                >
+                  {keyword} | {location} | {phoneNumber}
+                </span>
+              </div>
+
+              <div className="w-full group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+                <h2 className={`mb-3 text-2xl font-semibold`}>
+                  Text to Add Links To
+                  <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                    :
+                  </span>
+                </h2>
+                <br />
+                <textarea
+                  className="text-black rounded-lg p-2 w-full"
+                  id="keywords"
+                  rows={10}
+                  onChange={handleTextWithoutLinksChange}
+                  placeholder='Enter plain text for link injection.'
+                />
+              </div>
+              <h2 className={`mb-3 text-2xl font-semibold`}>
+                <button onClick={() => handleInjectLinks(textWithoutLinks, keyword, [bbb.link, yelp.link, foursquare.link, superpages.link, yellowpages.link], index)}>
+                  Inject Links
+                  <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                    -&gt;
+                  </span>
+                </button>
+              </h2>
+
+              {linkInfo.textWithLinks && (
+                <>
+                  <div className="w-full group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+                    <h2 className={`mb-3 text-2xl font-semibold`}>
+                      Text With Links Added
+                      <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                        :
+                      </span>
+                    </h2>
+                    <br />
+                    <textarea
+                      className="text-black rounded-lg p-2 w-full"
+                      id="keywords"
+                      rows={10}
+                      value={linkInfo.textWithLinks}
+                      onChange={handleTextWithoutLinksChange}
+                      placeholder='Enter plain text for link injection.'
+                    />
+                  </div>
+                </>
+              )
+              }
+
+              <div
+                key={`${keyword}-${location}-${index}`}
+                className="mb-10  w-full lg:mb-0 lg:grid-cols-2 md:grid-cols-1 lg:text-left"
+              >
+                <div
+                  className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${bbb.copied
                     ? "border-gray-500 bg-gray-100/0"
                     : "border-gray-500 bg-gray-100/10"
-                  }`}
-                onClick={() => {
-                  console.log(linkInfo.bbb.copied);
-                  handleLinkCopy(index, "bbb");
-                }}
-              >
-                <h2 className={`mb-3 text-2xl font-semibold`}>BBB</h2>
-                <div className={`m-0 text-sm opacity-50 text-right`}>
-                  {linkInfo.bbb.link}{" "}
-                  {linkInfo.bbb.copied && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6  right-0 bottom-5 text-green-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
+                    }`}
+                  onClick={() => {
+                    console.log(bbb.copied);
+                    handleLinkCopy(index, "bbb");
+                  }}
+                >
+                  <h2 className={`mb-3 text-2xl font-semibold`}>BBB</h2>
+                  <div className={`m-0 text-sm opacity-50 text-right`}>
+                    {bbb.link}
+                    {bbb.copied && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6  right-0 bottom-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div
-                className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${linkInfo.yelp.copied
+                <div
+                  className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${yelp.copied
                     ? "border-gray-500 bg-gray-100/0"
                     : "border-gray-500 bg-gray-100/10"
-                  }`}
-                onClick={() => {
-                  console.log(linkInfo.yelp.copied);
-                  handleLinkCopy(index, "yelp");
-                }}
-              >
-                <h2 className={`mb-3 text-2xl font-semibold`}>Yelp</h2>
-                <div className={`m-0 text-sm opacity-50 text-right`}>
-                  {linkInfo.yelp.link}{" "}
-                  {linkInfo.yelp.copied && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6  right-0 bottom-5 text-green-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
+                    }`}
+                  onClick={() => {
+                    console.log(yelp.copied);
+                    handleLinkCopy(index, "yelp");
+                  }}
+                >
+                  <h2 className={`mb-3 text-2xl font-semibold`}>Yelp</h2>
+                  <div className={`m-0 text-sm opacity-50 text-right`}>
+                    {yelp.link}
+                    {yelp.copied && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6  right-0 bottom-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div
-                className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
-                  linkInfo.foursquare.copied
+                <div
+                  className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${foursquare.copied
                     ? "border-gray-500 bg-gray-100/0"
                     : "border-gray-500 bg-gray-100/10"
-                  }`}
-                onClick={() => {
-                  console.log(linkInfo.foursquare.copied);
-                  handleLinkCopy(index, "foursquare");
-                }}
-              >
-                <h2 className={`mb-3 text-2xl font-semibold`}>Foursquare</h2>
-                <div className={`m-0 text-sm opacity-50 text-right`}>
-                  {linkInfo.foursquare.link}{" "}
-                  {linkInfo.foursquare.copied && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6  right-0 bottom-5 text-green-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
+                    }`}
+                  onClick={() => {
+                    console.log(foursquare.copied);
+                    handleLinkCopy(index, "foursquare");
+                  }}
+                >
+                  <h2 className={`mb-3 text-2xl font-semibold`}>Foursquare</h2>
+                  <div className={`m-0 text-sm opacity-50 text-right`}>
+                    {foursquare.link}
+                    {foursquare.copied && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6  right-0 bottom-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div
-                className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${linkInfo.superpages.copied
+                <div
+                  className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${superpages.copied
                     ? "border-gray-500 bg-gray-100/0"
                     : "border-gray-500 bg-gray-100/10"
-                  }`}
-                onClick={() => {
-                  console.log(linkInfo.superpages.copied);
-                  handleLinkCopy(index, "superpages");
-                }}
-              >
-                <h2 className={`mb-3 text-2xl font-semibold`}>Super Pages</h2>
-                <div className={`m-0 text-sm opacity-50 text-right`}>
-                  {linkInfo.superpages.link}{" "}
-                  {linkInfo.superpages.copied && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6  right-0 bottom-5 text-green-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
+                    }`}
+                  onClick={() => {
+                    console.log(superpages.copied);
+                    handleLinkCopy(index, "superpages");
+                  }}
+                >
+                  <h2 className={`mb-3 text-2xl font-semibold`}>Super Pages</h2>
+                  <div className={`m-0 text-sm opacity-50 text-right`}>
+                    {superpages.link}
+                    {superpages.copied && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6  right-0 bottom-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div
-                className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${linkInfo.yellowpages.copied
+                <div
+                  className={`group rounded-lg border border-transparent my-2 px-5 py-4 transition-colors hover:border-gray-300  hover:bg-gray-200 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${yellowpages.copied
                     ? "border-gray-500 bg-gray-100/0"
                     : "border-gray-500 bg-gray-100/10"
-                  }`}
-                onClick={() => {
-                  console.log(linkInfo.yellowpages.copied);
-                  handleLinkCopy(index, "yellowpages");
-                }}
-              >
-                <h2 className={`mb-3 text-2xl font-semibold`}>Yellow Pages</h2>
-                <div className={`m-0 text-sm opacity-50 text-right`}>
-                  {linkInfo.yellowpages.link}{" "}
-                  {linkInfo.yellowpages.copied && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6  right-0 bottom-5 text-green-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
+                    }`}
+                  onClick={() => {
+                    console.log(yellowpages.copied);
+                    handleLinkCopy(index, "yellowpages");
+                  }}
+                >
+                  <h2 className={`mb-3 text-2xl font-semibold`}>Yellow Pages</h2>
+                  <div className={`m-0 text-sm opacity-50 text-right`}>
+                    {yellowpages.link}
+                    {yellowpages.copied && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6  right-0 bottom-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </>
-        )))}
+            </>
+          )
+        })
+      }
+
     </main>
   );
 }
