@@ -201,7 +201,7 @@ const handleClickParagraph = (index, value) => {
               rows={10}
               value={locations}
               onChange={handleLocationsChange}
-              placeholder='Enter locations seperated by a ";". Ex: Miami, FL; Orlando, FL"'
+              placeholder='Enter locations seperated by a ";" or one per line. Ex: Miami, FL; Orlando, FL"'
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
