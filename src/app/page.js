@@ -320,7 +320,10 @@ export default function Home() {
 
               {linkInfo.textWithLinks && (
                 <>
-                  <div className="w-full group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+                  <div 
+                  className="w-full group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+                  onClick={handleClickCopy(linkInfo.textWithLinks)}
+                  >
                     <h2 className={`mb-3 text-2xl font-semibold`}>
                       Text With Links Added
                       <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
@@ -328,14 +331,10 @@ export default function Home() {
                       </span>
                     </h2>
                     <br />
-                    <textarea
-                      className="text-black rounded-lg p-2 w-full"
-                      id="keywords"
-                      rows={10}
-                      defaultValue={linkInfo.textWithLinks}
-                      onChange={handleTextWithoutLinksChange}
-                      placeholder='Enter plain text for link injection.'
-                    />
+                    <p 
+                    dangerouslySetInnerHTML={{ __html: linkInfo.textWithLinks }}
+                    >
+                    </p>
                   </div>
                 </>
               )
