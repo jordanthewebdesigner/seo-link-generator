@@ -40,14 +40,14 @@ export default async function generateContent(prompt) {
         "headers": {
             "Content-Type": "application/json"
         },
-        "payload": JSON.stringify(requestBody)
+        "body": JSON.stringify(requestBody)
     };
 
     const response = await fetch(url, options);
-    console.log({ response })
+    const json = await response.json();
+    console.log(json.candidates[0].content.parts[0].text)
+    const content = json.candidates[0].content.parts[0].text;
+    return content;
+}
 
-    var responseData = JSON.parse(response.getContentText());
-
-
-    return Response.json({ "message": responseData })}
 

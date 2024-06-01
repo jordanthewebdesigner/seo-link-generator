@@ -14,20 +14,24 @@ export default function Home() {
     const [textWithoutLinks, setTextWithoutLinks] = useState("");
 
     const handleGenerateContent = async (keyword, location, index) => {
-        const text = `Write a concise marketing paragraph of 80-100 words about our ${keyword} services in ${location}. (Use the keyword "${keyword}" 5 times.)`;
+        const keywordRegex = new RegExp(keyword, 'gi');
+        const text = `Write a concise marketing paragraph of 100-120 words about our ${keyword.toLowerCase()} services in ${location}. (Use the EXACT keyword "${keyword.toLowerCase()}" at least 5 times.) Don't mention a business name, but speak in the voice of a succsessful business. Give me the plain text version of the paragraph.`;
         const generatedContent = await generateContent(text);
         console.log(generatedContent);
+        let keywordCount = (generatedContent.match(keywordRegex) || []).length;
+        console.log(keywordCount);
         const updatedLinks = [...linkObjects]; // Create a shallow copy of linkObjects
-        updatedLinks[index].textWithoutLinks = text;
-        updatedLinks[index].textWithLinks = generatedContent.message;
+        updatedLinks[index].textWithoutLinks = generatedContent;
         setlinkObjects(updatedLinks);
     }
 
     const handleInjectLinks = (text, keyword, links, index) => {
         console.log(text, keyword, links, index);
         console.log(linkObjects[index])
-        const updatedText = addLinkstoText(text, keyword, links);
+        const res = addLinkstoText(text, keyword, links);
+        console.log(res);
         console.log(updatedText);
+        console.log(linkCount);
         //find all of the objects in the linkObjects array with the same keyword and set the textWithoutLinks property for all of them
         linkObjects.forEach((link) => {
             if (link.keyword === keyword) {
@@ -64,8 +68,8 @@ export default function Home() {
 
     const handleClickParagraph = (index, value) => {
         navigator.clipboard.writeText(value);
-        updatedLinks[index].copied = true;
-        setlinkObjects(updatedLinks);
+        linkObjects[index].copied = true;
+        setlinkObjects([...linkObjects]);
     };
 
 
@@ -291,7 +295,7 @@ export default function Home() {
 
             {linkObjects.length > 0 &&
                 linkObjects.map((linkInfo, index) => {
-                    const { keyword, location, textWithLinks, bbb, yelp, foursquare, superpages, yellowpages } = linkInfo;
+                    const { keyword, location, textWithLinks, textWithoutLinks, bbb, yelp, foursquare, superpages, yellowpages } = linkInfo;
                     return (
                         <>
                             <div
@@ -319,7 +323,7 @@ export default function Home() {
                                     </h2>
                                     <h2 className={`mb-3 text-2xl font-semibold`}>
                                         <button onClick={() => handleGenerateContent(keyword, location, index)}>
-                                            Create Links
+                                            Generate Content
                                             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                                                 -&gt;
                                             </span>
@@ -331,7 +335,7 @@ export default function Home() {
                                     className="text-black rounded-lg p-2 w-full"
                                     id="keywords"
                                     rows={10}
-                                    defaultValue={linkInfo.textWithoutLinks}
+                                    value={textWithoutLinks}
                                     onChange={handleTextWithoutLinksChange}
                                     placeholder='Enter plain text for link injection.'
                                 />
@@ -348,7 +352,7 @@ export default function Home() {
                             {textWithLinks && (
                                 <>
                                     <div
-                                        className="w-full group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+                                        className={`w-full group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${linkInfo.copied ? "border-gray-500 bg-gray-100/0" : "border-gray-500 bg-gray-100/10"}`}
                                         onClick={() => {
                                             handleClickParagraph(index, textWithLinks);
                                         }}
@@ -364,6 +368,17 @@ export default function Home() {
                                             dangerouslySetInnerHTML={{ __html: textWithLinks }}
                                         >
                                         </p>
+                                        {linkInfo.copied && (
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="h-6 w-6  right-0 bottom-5 text-green-500"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        )}
                                     </div>
                                 </>
                             )
