@@ -15,7 +15,7 @@ export default function Home() {
 
     const handleGenerateContent = async (keyword, location, index) => {
         const keywordRegex = new RegExp(keyword, 'gi');
-        const text = `Write a concise marketing paragraph of 100-120 words about our ${keyword.toLowerCase()} services in ${location}. (Use the EXACT keyword "${keyword.toLowerCase()}" at least 5 times.) Don't mention a business name, but speak in the voice of a succsessful business. Give me the plain text version of the paragraph.`;
+        const text = `Write a concise marketing paragraph of 100-120 words about our ${keyword.toLowerCase()} services in ${location}. (Use the EXACT keyword "${keyword.toLowerCase()}" at least 5 times.) Speak in the voice of a succsessful business, but don't make any references to a business name. Give me the plain text version of the paragraph.`;
         const generatedContent = await generateContent(text);
         console.log(generatedContent);
         let keywordCount = (generatedContent.match(keywordRegex) || []).length;
