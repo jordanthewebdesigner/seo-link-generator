@@ -15,8 +15,9 @@ export default function Home() {
 
     const handleGenerateContent = async (keyword, location, index) => {
         const keywordRegex = new RegExp(keyword, 'gi');
-        const text = `Write a concise marketing paragraph of 100-120 words about our ${keyword.toLowerCase()} services in ${location}. Don't mention the state. (Use the EXACT keyword "${keyword.toLowerCase()}" at least 5 times.) Speak in the voice of a succsessful business, but don't make any references to a business name. Give me the plain text version of the paragraph.`;
-        const generatedContent = await generateContent(text);
+        const text = `Write a concise marketing paragraph of 100-120 words about our ${keyword.toLowerCase()} services in ${location}. (Use the EXACT keyword "${keyword.toLowerCase()}" at least 5 times.) Speak in the voice of a succsessful business, but don't make any references to a business name or the state.  Give me the plain text version of the paragraph.`;
+        const rawGeneratedContent = await generateContent(text);
+        const generatedContent = rawGeneratedContent.replace(/[*#]/g, '');
         console.log(generatedContent);
         let keywordCount = (generatedContent.match(keywordRegex) || []).length;
         console.log(keywordCount);
@@ -29,9 +30,10 @@ export default function Home() {
         console.log(text, keyword, links, index);
         console.log(linkObjects[index])
         const res = addLinkstoText(text, keyword, links);
+        const { updatedText, keywordCount } = res;
         console.log(res);
         console.log(updatedText);
-        console.log(linkCount);
+        console.log(keywordCount);
         //find all of the objects in the linkObjects array with the same keyword and set the textWithoutLinks property for all of them
         linkObjects.forEach((link) => {
             if (link.keyword === keyword) {
