@@ -276,7 +276,7 @@ export default function Home() {
                         onClick={handleFormSubmit}
                     >
                         <button type="submit">
-                            Extract Data
+                            Extract Data{" "}
                             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                                 -&gt;
                             </span>
@@ -284,7 +284,7 @@ export default function Home() {
                     </h2>
                     <h2 className={`mb-3 text-2xl font-semibold`}>
                         <button onClick={handleGenerateLinks}>
-                            Create Links
+                            Create Links{" "}
                             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                                 -&gt;
                             </span>
@@ -323,7 +323,7 @@ export default function Home() {
                                     </h2>
                                     <h2 className={`mb-3 text-2xl font-semibold`}>
                                         <button onClick={() => handleGenerateContent(keyword, location, index)}>
-                                            Generate Content
+                                            Generate Content{" "}
                                             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                                                 -&gt;
                                             </span>
