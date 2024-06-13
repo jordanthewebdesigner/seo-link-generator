@@ -11,7 +11,7 @@ export default function Home() {
     const [keywords, setKeywords] = useState("");
     const [locations, setLocations] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [textWithoutLinks, setTextWithoutLinks] = useState("");
+    const [textWithoutLinksTemp, setTextWithoutLinksTemp] = useState("");
 
     const handleGenerateContent = async (keyword, location, index) => {
         const keywordRegex = new RegExp(keyword, 'gi');
@@ -23,6 +23,7 @@ export default function Home() {
         console.log(keywordCount);
         const updatedLinks = [...linkObjects]; // Create a shallow copy of linkObjects
         updatedLinks[index].textWithoutLinks = generatedContent;
+        setTextWithoutLinksTemp(generatedContent);
         setlinkObjects(updatedLinks);
     }
 
@@ -47,10 +48,13 @@ export default function Home() {
         setlinkObjects([...linkObjects]);
     }
 
-    const handleTextWithoutLinksChange = (e) => {
-        console.log(e.target.value);
-        setTextWithoutLinks(e.target.value);
+    const handleTextWithoutLinksChange = (e, index) => {
+      console.log("ASDFASDF")
+      console.log(e.target.value);
+      console.log(index)
+      setTextWithoutLinksTemp(e.target.value);
     };
+  
 
     useEffect(() => {
         console.log(linkObjects);
@@ -108,7 +112,7 @@ export default function Home() {
         }
         setExtractedLocations(locationArray);
         setPhoneNumber(phoneNumber);
-        setTextWithoutLinks(textWithoutLinks);
+        setTextWithoutLinksTemp("");
     };
 
     function extractKeywords(text) {
@@ -337,13 +341,13 @@ export default function Home() {
                                     className="text-black rounded-lg p-2 w-full"
                                     id="keywords"
                                     rows={10}
-                                    defaultValue={textWithoutLinks}
-                                    onChange={handleTextWithoutLinksChange}
+                                    defaultValue={textWithoutLinksTemp}
+                                    onChange={(e) => handleTextWithoutLinksChange(e, index)}
                                     placeholder='Enter plain text for link injection.'
                                 />
                             </div>
                             <h2 className={`mb-3 text-2xl font-semibold`}>
-                                <button onClick={() => handleInjectLinks(textWithoutLinks, keyword, [bbb.link, yelp.link, foursquare.link, superpages.link, yellowpages.link], index)}>
+                                <button onClick={() => handleInjectLinks(textWithoutLinksTemp, keyword, [bbb.link, yelp.link, foursquare.link, superpages.link, yellowpages.link], index)}>
                                     Inject Links
                                     <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                                         -&gt;
